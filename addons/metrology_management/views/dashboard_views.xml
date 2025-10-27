@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View -->
+    <record id="view_dashboard_form" model="ir.ui.view">
+        <field name="name">metrology.dashboard.form</field>
+        <field name="model">metrology.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Dashboard Metrológico" create="false" edit="false" delete="false">
+                <sheet>
+                    <group>
+                        <group string="Indicadores">
+                            <field name="total_equipamentos"/>
+                            <field name="equipamentos_conformes"/>
+                            <field name="equipamentos_vencidos"/>
+                            <field name="proximas_calibracoes"/>
+                        </group>
+                        <group string="Resumo">
+                            <field name="calibracoes_mes"/>
+                            <field name="taxa_conformidade" widget="percentage"/>
+                        </group>
+                    </group>
+                    <button name="refresh_dashboard" string="Atualizar" type="object"
+                            class="oe_highlight" icon="fa-refresh"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_metrology_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard Metrológico</field>
+        <field name="res_model">metrology.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">main</field>
+    </record>
+</odoo>

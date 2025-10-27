@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_certificado_calibracao">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Cabeçalho -->
+                        <div class="text-center mb-4">
+                            <h2>CERTIFICADO DE CALIBRAÇÃO</h2>
+                            <h4 t-field="o.name"/>
+                            <p>Data de Emissão: <span t-field="o.data_calibracao"/></p>
+                        </div>
+                        
+                        <!-- Informações do Equipamento -->
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <strong>Equipamento:</strong>
+                                <p t-field="o.equipamento_id.nome"/>
+                                <strong>TAG:</strong>
+                                <p t-field="o.equipamento_id.tag"/>
+                                <strong>Fabricante:</strong>
+                                <p t-field="o.equipamento_id.fabricante"/>
+                                <strong>Modelo:</strong>
+                                <p t-field="o.equipamento_id.modelo"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Número de Série:</strong>
+                                <p t-field="o.equipamento_id.numero_serie"/>
+                                <strong>Localização:</strong>
+                                <p t-field="o.equipamento_id.localizacao"/>
+                                <strong>Responsável:</strong>
+                                <p t-field="o.equipamento_id.responsavel_id"/>
+                            </div>
+                        </div>
+                        
+                        <!-- Informações da Calibração -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h4>Dados da Calibração</h4>
+                                <strong>Local do Ensaio:</strong>
+                                <p t-field="o.local_ensaio_id.name"/>
+                                <strong>Executor:</strong>
+                                <p t-field="o.executor_id.name"/>
+                                <strong>Técnico Responsável:</strong>
+                                <p t-field="o.tecnico_responsavel"/>
+                            </div>
+                        </div>
+                        
+                        <!-- Condições Ambientais -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h4>Condições Ambientais</h4>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Temperatura:</strong></td>
+                                        <td><span t-field="o.temperatura"/> °C</td>
+                                        <td><strong>Umidade:</strong></td>
+                                        <td><span t-field="o.umidade"/> %</td>
+                                        <td><strong>Pressão:</strong></td>
+                                        <td><span t-field="o.pressao"/> hPa</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Padrões Utilizados -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h4>Padrões Utilizados</h4>
+                                <strong>Padrão:</strong>
+                                <p t-field="o.padrao_id.name"/>
+                                <strong>Rastreabilidade:</strong>
+                                <p t-field="o.rastreabilidade"/>
+                            </div>
+                        </div>
+                        
+                        <!-- Observações -->
+                        <div class="row mt-3" t-if="o.observacoes">
+                            <div class="col-12">
+                                <h4>Observações</h4>
+                                <p t-field="o.observacoes"/>
+                            </div>
+                        </div>
+                        
+                        <!-- Assinaturas -->
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <div class="mt-5">
+                                    <hr style="width: 75%;"/>
+                                    <p>Técnico Responsável</p>
+                                    <p t-field="o.tecnico_responsavel"/>
+                                </div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div class="mt-5">
+                                    <hr style="width: 75%;"/>
+                                    <p>Aprovação</p>
+                                    <p t-field="o.write_uid.name"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+    
+    <record id="action_report_certificado" model="ir.actions.report">
+        <field name="name">Certificado de Calibração</field>
+        <field name="model">metrology.calibracao</field>
+        <field name="report_type">qweb-pdf</field>
+    <field name="report_name">metrology_management.report_certificado_calibracao</field>
+    <field name="report_file">metrology_management.report_certificado_calibracao</field>
+        <field name="binding_model_id" ref="model_metrology_calibracao"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+</odoo>

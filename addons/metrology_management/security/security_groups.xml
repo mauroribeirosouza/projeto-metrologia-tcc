@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Categoria do Módulo -->
+    <record id="module_category_metrology" model="ir.module.category">
+        <field name="name">Controle Metrológico</field>
+        <field name="description">Gestão de Instrumentos e Calibrações</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Grupo Usuário -->
+    <record id="group_metrology_user" model="res.groups">
+        <field name="name">Usuário Metrologia</field>
+        <field name="category_id" ref="module_category_metrology"/>
+        <field name="comment">Acesso somente leitura aos registros metrológicos.</field>
+    </record>
+
+    <!-- Grupo Técnico -->
+    <record id="group_metrology_technician" model="res.groups">
+        <field name="name">Técnico Metrologia</field>
+        <field name="category_id" ref="module_category_metrology"/>
+        <field name="implied_ids" eval="[(4, ref('group_metrology_user'))]"/>
+        <field name="comment">Pode criar e editar registros, mas não pode excluir.</field>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Grupo Gestor -->
+    <record id="group_metrology_manager" model="res.groups">
+        <field name="name">Gestor Metrologia</field>
+        <field name="category_id" ref="module_category_metrology"/>
+        <field name="implied_ids" eval="[(4, ref('group_metrology_technician'))]"/>
+        <field name="comment">Acesso total ao módulo de metrologia.</field>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Regras de Acesso Global -->
+    <record id="metrology_global_rule" model="ir.rule">
+        <field name="name">Regra Global de Acesso Metrológico</field>
+        <field name="model_id" ref="model_metrology_equipamento"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_metrology_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+</odoo>
