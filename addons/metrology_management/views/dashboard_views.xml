@@ -6,6 +6,12 @@
         <field name="model">metrology.dashboard</field>
         <field name="arch" type="xml">
             <form string="Dashboard Metrológico" create="false" edit="false" delete="false">
+                <header>
+                    <button name="%(action_report_dashboard_export)d"
+                            string="Exportar Relatório"
+                            type="action"
+                            class="btn-primary"/>
+                </header>
                 <sheet>
                     <group>
                         <group string="Indicadores">

@@ -13,6 +13,14 @@ class MetrologyDashboard(models.Model):
     calibracoes_mes = fields.Integer(string='Calibrações do Mês', compute='_compute_dashboard_data', store=True)
     taxa_conformidade = fields.Float(string='Taxa de Conformidade', compute='_compute_dashboard_data', store=True)
 
+    @api.model
+    def create(self, vals):
+        """Garante que só existe um registro de dashboard"""
+        existing = self.search([], limit=1)
+        if existing:
+            return existing
+        return super().create(vals)
+
     @api.depends('total_equipamentos', 'equipamentos_conformes')
     def _compute_dashboard_data(self):
         """Computa os dados do dashboard"""
@@ -56,10 +64,47 @@ class MetrologyDashboard(models.Model):
             )
 
     @api.model
-    def get_dashboard_data(self):
-        """Retorna dados para o dashboard em formato JSON, calculados on-the-fly sem criar registros."""
+    def default_get(self, fields_list):
+        """Override para forçar recálculo ao abrir o dashboard"""
+        res = super().default_get(fields_list)
+        
+        # Procura ou cria o registro do dashboard
+        dashboard = self.search([], limit=1)
+        if not dashboard:
+            dashboard = self.create({})
+        else:
+            # Força recálculo dos campos computados
+            dashboard._compute_dashboard_data()
+        
+        # Retorna os valores atualizados
+        if dashboard:
+            for field in fields_list:
+                if hasattr(dashboard, field):
+                    res[field] = getattr(dashboard, field)
+        
+        return res
+
+    def get_report_data(self):
+        """Retorna um snapshot com os dados do dashboard e a última calibração de cada equipamento.
+
+        Estrutura retornada:
+        {
+          'total_equipamentos': int,
+          'equipamentos_conformes': int,
+          'equipamentos_vencidos': int,
+          'proximas_calibracoes': int,
+          'calibracoes_mes': int,
+          'taxa_conformidade': float,  # 0..1
+          'equipment_rows': [
+              {'equipamento': record(equip), 'calibracao': record(cal) or False}
+          ]
+        }
+        """
+        self.ensure_one()
         Equip = self.env['metrology.equipamento']
         Calib = self.env['metrology.calibracao']
+
+        from datetime import date, timedelta
 
         total_equipamentos = Equip.search_count([('active', '=', True)])
         equipamentos_conformes = Equip.search_count([
@@ -81,20 +126,25 @@ class MetrologyDashboard(models.Model):
             ('data_calibracao', '>=', inicio_mes), ('state', '=', 'aprovado')
         ])
 
-        # Widget percentage espera 0..1
-        taxa_conformidade = round((equipamentos_conformes / total_equipamentos), 4) if total_equipamentos > 0 else 0.0
+        taxa_conformidade = (
+            round((equipamentos_conformes / total_equipamentos), 4)
+            if total_equipamentos > 0 else 0.0
+        )
+
+        equipment_rows = []
+        for eq in Equip.search([('active', '=', True)], order='tag asc, nome asc'):
+            last = Calib.search([
+                ('equipamento_id', '=', eq.id),
+                ('state', '=', 'aprovado')
+            ], order='data_calibracao desc', limit=1)
+            equipment_rows.append({'equipamento': eq, 'calibracao': last or False})
 
         return {
             'total_equipamentos': total_equipamentos,
-            'conformes': equipamentos_conformes,
-            'vencidos': equipamentos_vencidos,
+            'equipamentos_conformes': equipamentos_conformes,
+            'equipamentos_vencidos': equipamentos_vencidos,
             'proximas_calibracoes': proximas_calibracoes,
             'calibracoes_mes': calibracoes_mes,
             'taxa_conformidade': taxa_conformidade,
+            'equipment_rows': equipment_rows,
         }
-
-    @api.model
-    def refresh_dashboard(self):
-        """Atualiza os dados do dashboard"""
-        # Retorna os dados atualizados calculados on-the-fly
-        return self.get_dashboard_data()

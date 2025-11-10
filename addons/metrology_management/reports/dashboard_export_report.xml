@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Action -->
+    <record id="action_report_dashboard_export" model="ir.actions.report">
+        <field name="name">Relatório do Dashboard Metrológico</field>
+        <field name="model">metrology.dashboard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">metrology_management.report_dashboard_export</field>
+        <field name="report_file">metrology_management.report_dashboard_export</field>
+        <field name="binding_model_id" ref="model_metrology_dashboard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- QWeb Template -->
+    <template id="report_dashboard_export">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Relatório do Dashboard Metrológico</h2>
+
+                        <t t-set="data" t-value="o.get_report_data()"/>
+
+                        <!-- Resumo/Indicadores -->
+                        <div class="row mt-2 mb-3">
+                            <div class="col-12">
+                                <table class="table table-sm o_main_table">
+                                    <tbody>
+                                        <tr>
+                                            <th>Total de Equipamentos</th>
+                                            <td t-esc="data.get('total_equipamentos')"/>
+                                        </tr>
+                                        <tr>
+                                            <th>Equipamentos Conformes</th>
+                                            <td t-esc="data.get('equipamentos_conformes')"/>
+                                        </tr>
+                                        <tr>
+                                            <th>Equipamentos Vencidos</th>
+                                            <td t-esc="data.get('equipamentos_vencidos')"/>
+                                        </tr>
+                                        <tr>
+                                            <th>Próximas Calibrações (30 dias)</th>
+                                            <td t-esc="data.get('proximas_calibracoes')"/>
+                                        </tr>
+                                        <tr>
+                                            <th>Calibrações no Mês</th>
+                                            <td t-esc="data.get('calibracoes_mes')"/>
+                                        </tr>
+                                        <tr>
+                                            <th>Taxa de Conformidade</th>
+                                            <td>
+                                                <t t-esc="'%0.2f' % (data.get('taxa_conformidade', 0.0) * 100.0)"/>%
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tabela de Equipamentos e Última Calibração -->
+                        <h3>Equipamentos e Última Calibração</h3>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 12%">TAG</th>
+                                    <th style="width: 22%">Descrição</th>
+                                    <th style="width: 12%">Modelo</th>
+                                    <th style="width: 12%">Nº de Série</th>
+                                    <th style="width: 10%">Status</th>
+                                    <th style="width: 10%">Últ. Calib.</th>
+                                    <th style="width: 12%">Resultado</th>
+                                    <th style="width: 10%">Certificado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="data.get('equipment_rows', [])" t-as="row">
+                                    <t t-set="eq" t-value="row['equipamento']"/>
+                                    <t t-set="cal" t-value="row['calibracao']"/>
+                                    <tr>
+                                        <td><span t-field="eq.tag"/></td>
+                                        <td><span t-field="eq.nome"/></td>
+                                        <td><span t-field="eq.modelo"/></td>
+                                        <td><span t-field="eq.numero_serie"/></td>
+                                        <td><span t-field="eq.status_metrologico"/></td>
+                                        <td>
+                                            <t t-if="cal">
+                                                <span t-field="cal.data_calibracao"/>
+                                            </t>
+                                            <t t-else="">-</t>
+                                        </td>
+                                        <td>
+                                            <t t-if="cal">
+                                                <span t-field="cal.resultado"/>
+                                            </t>
+                                            <t t-else="">-</t>
+                                        </td>
+                                        <td>
+                                            <t t-if="cal">
+                                                <span t-field="cal.numero_certificado"/>
+                                            </t>
+                                            <t t-else="">-</t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

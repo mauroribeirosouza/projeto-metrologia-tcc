@@ -36,15 +36,16 @@
     # Assignments
     'data/assign_admin_technician.xml',
         
+        # Reports (carregar antes das views que referenciam actions)
+        'reports/certificado_template.xml',
+        'reports/equipment_history_report.xml',
+        'reports/dashboard_export_report.xml',
+
         # Views
         'views/equipment_views.xml',
         'views/calibracao_views.xml',
         'views/dashboard_views.xml',
         'views/menu.xml',  # Carregar menus por último
-        
-        # Reports
-    'reports/certificado_template.xml',
-    'reports/equipment_history_report.xml',
     ],
     'demo': [
         'demo/demo_data.xml',
