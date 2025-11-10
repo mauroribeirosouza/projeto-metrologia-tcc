@@ -19,8 +19,6 @@
                             <field name="taxa_conformidade" widget="percentage"/>
                         </group>
                     </group>
-                    <button name="refresh_dashboard" string="Atualizar" type="object"
-                            class="oe_highlight" icon="fa-refresh"/>
                 </sheet>
             </form>
         </field>

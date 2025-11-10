@@ -6,6 +6,49 @@ class Equipamento(models.Model):
     _description = 'Instrumento de Medição'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'codigo'
+    _rec_name = 'nome'
+
+    def name_get(self):
+        """Display as 'TAG - Descrição'. Fallbacks to available pieces."""
+        result = []
+        for rec in self:
+            parts = []
+            if rec.tag:
+                parts.append(rec.tag)
+            if rec.nome:
+                parts.append(rec.nome)
+            display = ' - '.join(parts) if parts else (rec.codigo or str(rec.id))
+            result.append((rec.id, display))
+        return result
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        args = args or []
+        if name:
+            # Search by tag OR description (nome)
+            domain = args + ['|', ('tag', operator, name), ('nome', operator, name)]
+            recs = self.search(domain, limit=limit)
+        else:
+            recs = self.search(args, limit=limit)
+        return recs.name_get()
+
+    def action_view_calibracoes(self):
+        """Ação para exibir as calibrações do equipamento em uma nova view"""
+        self.ensure_one()
+        action = {
+            'name': 'Calibrações do Equipamento',
+            'type': 'ir.actions.act_window',
+            'res_model': 'metrology.calibracao',
+            'view_mode': 'tree,form',
+            'domain': [('equipamento_id', '=', self.id)],
+            'context': {'default_equipamento_id': self.id},
+        }
+        return action
+
+    def action_print_history(self):
+        """Gera o relatório PDF com todo o histórico do equipamento."""
+        self.ensure_one()
+        return self.env.ref('metrology_management.action_report_equipment_history').report_action(self)
 
     # Campos de Identificação
     codigo = fields.Char(
@@ -57,7 +100,7 @@ class Equipamento(models.Model):
     frequencia_calibracao = fields.Integer(string='Frequência de Calibração (meses)', default=12)
     ultima_calibracao = fields.Date(string='Data da Última Calibração', compute='_compute_datas_calibracao', store=True)
     proxima_calibracao = fields.Date(string='Data da Próxima Calibração', compute='_compute_datas_calibracao', store=True)
-    dias_para_vencimento = fields.Integer(string='Dias para Vencimento', compute='_compute_dias_vencimento')
+    dias_para_vencimento = fields.Integer(string='Dias para Vencimento', compute='_compute_dias_vencimento', store=True)
     
     # Relacionamentos
     calibracao_ids = fields.One2many('metrology.calibracao', 'equipamento_id', string='Histórico de Calibrações')
@@ -67,7 +110,7 @@ class Equipamento(models.Model):
     active = fields.Boolean(default=True, string='Ativo')
     observacoes = fields.Text(string='Observações')
     
-    @api.depends('calibracao_ids', 'calibracao_ids.data_calibracao')
+    @api.depends('calibracao_ids', 'calibracao_ids.data_calibracao', 'calibracao_ids.state')
     def _compute_datas_calibracao(self):
         """Calcula as datas de última e próxima calibração"""
         for equipamento in self:
@@ -85,7 +128,7 @@ class Equipamento(models.Model):
                 equipamento.ultima_calibracao = False
                 equipamento.proxima_calibracao = False
     
-    @api.depends('proxima_calibracao', 'calibracao_ids.resultado')
+    @api.depends('proxima_calibracao', 'calibracao_ids.resultado', 'calibracao_ids.state')
     def _compute_status_metrologico(self):
         """Calcula o status metrológico com base nas calibrações"""
         from datetime import date

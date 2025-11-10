@@ -70,6 +70,16 @@ class Calibracao(models.Model):
         ('cancelado', 'Cancelado'),
     ], string='Status', default='rascunho', tracking=True)
     
+    @api.depends('data_calibracao', 'equipamento_id.frequencia_calibracao')
+    def _compute_data_validade(self):
+        """Calcula a data de validade com base na data de calibração e frequência do equipamento"""
+        for record in self:
+            if record.data_calibracao and record.equipamento_id:
+                frequencia = record.equipamento_id.frequencia_calibracao or 12
+                record.data_validade = record.data_calibracao + relativedelta(months=frequencia)
+            else:
+                record.data_validade = False
+    
     @api.constrains('data_calibracao', 'data_validade')
     def _check_dates(self):
         for record in self:
@@ -79,7 +89,11 @@ class Calibracao(models.Model):
     @api.onchange('equipamento_id')
     def _onchange_equipamento(self):
         if self.equipamento_id:
-            self.padrao_id = self.equipamento_id.padrao_recomendado_id
+            # Algumas instalações podem não ter o campo 'padrao_recomendado_id' no equipamento.
+            # Usar getattr com valor default evita AttributeError durante onchange.
+            padrao = getattr(self.equipamento_id, 'padrao_recomendado_id', False)
+            # Se o campo existir e for um recordset, atribuir o primeiro valor; caso contrário False.
+            self.padrao_id = padrao if padrao else False
 
     def action_em_analise(self):
         """Move o registro para o estado 'em_analise'"""
@@ -98,6 +112,10 @@ class Calibracao(models.Model):
         self.ensure_one()
         self.write({'state': 'cancelado'})
         self.equipamento_id._compute_status_metrologico()
+
+    def action_reset(self):
+        """Volta o registro para o estado rascunho"""
+        self.write({'state': 'rascunho'})
 
     def unlink(self):
         """Impede a exclusão de registros aprovados"""

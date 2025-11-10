@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View -->
+    <record id="view_calibracao_form" model="ir.ui.view">
+        <field name="name">metrology.calibracao.form</field>
+        <field name="model">metrology.calibracao</field>
+        <field name="arch" type="xml">
+            <form string="Calibração">
+        <header>
+            <!-- Usar os nomes de estado do modelo: rascunho, em_analise, aprovado, cancelado -->
+            <field name="state" widget="statusbar" 
+               statusbar_visible="rascunho,em_analise,aprovado,cancelado"/>
+            <!-- Iniciar análise -->
+            <button name="action_em_analise" type="object" 
+                string="Iniciar" class="oe_highlight"/>
+            <!-- Aprovar -->
+            <button name="action_aprovar" type="object" 
+                string="Aprovar" class="oe_highlight"/>
+            <!-- Reprovar / cancelar -->
+            <button name="action_cancelar" type="object" 
+                string="Reprovar" class="oe_highlight"/>
+            <!-- Voltar para rascunho -->
+            <button name="action_reset" type="object" 
+                string="Voltar para Rascunho"/>
+        </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="equipamento_id"/>
+                            <field name="padrao_id"/>
+                            <field name="local_ensaio_id"/>
+                            <field name="executor_id"/>
+                            <field name="data_calibracao"/>
+                            <field name="data_validade" readonly="1" force_save="1"/>
+                        </group>
+                        <group>
+                            <field name="tecnico_responsavel"/>
+                            <field name="numero_certificado"/>
+                            <field name="certificado_file"/>
+                            <field name="resultado"/>
+                            <field name="incerteza_expandida"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Observações">
+                            <field name="observacoes"/>
+                        </page>
+                        <!-- Pontos de calibração: implementar modelo 'ponto_calibracao' se necessário -->
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_calibracao_tree" model="ir.ui.view">
+        <field name="name">metrology.calibracao.tree</field>
+        <field name="model">metrology.calibracao</field>
+        <field name="arch" type="xml">
+                        <tree string="Calibrações" decoration-info="state=='rascunho'" 
+                                    decoration-warning="state=='em_analise'"
+                                    decoration-success="state=='aprovado'"
+                                    decoration-danger="state=='cancelado'">
+                <field name="name"/>
+                <field name="equipamento_id"/>
+                <field name="data_calibracao"/>
+                <field name="data_validade"/>
+                                <field name="tecnico_responsavel"/>
+                <field name="resultado"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_calibracao_search" model="ir.ui.view">
+        <field name="name">metrology.calibracao.search</field>
+        <field name="model">metrology.calibracao</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Calibrações">
+                <field name="name"/>
+                <field name="equipamento_id"/>
+                <field name="tecnico_responsavel"/>
+                <separator/>
+                <filter string="Rascunho" name="draft" domain="[('state', '=', 'rascunho')]"/>
+                <filter string="Em Análise" name="em_analise" domain="[('state', '=', 'em_analise')]"/>
+                <filter string="Aprovado" name="aprovado" domain="[('state', '=', 'aprovado')]"/>
+                <filter string="Cancelado" name="cancelado" domain="[('state', '=', 'cancelado')]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Equipamento" name="group_equipamento" context="{'group_by': 'equipamento_id'}"/>
+                    <filter string="Responsável" name="group_responsavel" context="{'group_by': 'tecnico_responsavel'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Data" name="group_data" context="{'group_by': 'data_calibracao'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action Window for Calibrações -->
+    <record id="metrology_management_calibracao_action" model="ir.actions.act_window">
+        <field name="name">Calibrações</field>
+        <field name="res_model">metrology.calibracao</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

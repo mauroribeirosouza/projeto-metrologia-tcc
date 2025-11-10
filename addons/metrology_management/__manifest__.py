@@ -29,17 +29,22 @@
         'security/security_groups.xml',
         'security/ir.model.access.csv',
         
-        # Data
-        'data/sequence_data.xml',
-        'data/cron.xml',
-        'data/mail_activity.xml',
+    # Data
+    'data/sequence_data.xml',
+    'data/cron.xml',
+    'data/mail_activity.xml',
+    # Assignments
+    'data/assign_admin_technician.xml',
         
-        # Views (only existing view files)
+        # Views
         'views/equipment_views.xml',
+        'views/calibracao_views.xml',
         'views/dashboard_views.xml',
+        'views/menu.xml',  # Carregar menus por último
         
         # Reports
-        'reports/certificado_template.xml',
+    'reports/certificado_template.xml',
+    'reports/equipment_history_report.xml',
     ],
     'demo': [
         'demo/demo_data.xml',

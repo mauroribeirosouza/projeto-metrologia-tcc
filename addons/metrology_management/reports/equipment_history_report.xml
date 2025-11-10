@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_equipment_history">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Histórico do Equipamento</h2>
+                        
+                        <!-- Identificação -->
+                        <h3>Identificação</h3>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td><strong>TAG:</strong></td>
+                                <td><span t-field="o.tag"/></td>
+                                <td><strong>Código:</strong></td>
+                                <td><span t-field="o.codigo"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Descrição:</strong></td>
+                                <td colspan="3"><span t-field="o.nome"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fabricante:</strong></td>
+                                <td><span t-field="o.fabricante"/></td>
+                                <td><strong>Modelo:</strong></td>
+                                <td><span t-field="o.modelo"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Número de Série:</strong></td>
+                                <td><span t-field="o.numero_serie"/></td>
+                                <td><strong>Tipo:</strong></td>
+                                <td><span t-field="o.tipo"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Especificações Técnicas -->
+                        <h3>Especificações Técnicas</h3>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td><strong>Faixa de Medição:</strong></td>
+                                <td><span t-field="o.faixa_medicao"/></td>
+                                <td><strong>Resolução:</strong></td>
+                                <td><span t-field="o.resolucao"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Incerteza Máxima:</strong></td>
+                                <td><span t-field="o.incerteza_maxima"/></td>
+                                <td><strong>Erro Máximo Admissível:</strong></td>
+                                <td><span t-field="o.erro_maximo_admissivel"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Localização:</strong></td>
+                                <td><span t-field="o.localizacao"/></td>
+                                <td><strong>Frequência de Calibração:</strong></td>
+                                <td><span t-field="o.frequencia_calibracao"/> meses</td>
+                            </tr>
+                        </table>
+
+                        <!-- Status Atual -->
+                        <h3>Status Atual</h3>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td><strong>Status Metrológico:</strong></td>
+                                <td><span t-field="o.status_metrologico"/></td>
+                                <td><strong>Última Calibração:</strong></td>
+                                <td><span t-field="o.ultima_calibracao"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Próxima Calibração:</strong></td>
+                                <td><span t-field="o.proxima_calibracao"/></td>
+                                <td><strong>Dias para Vencimento:</strong></td>
+                                <td><span t-field="o.dias_para_vencimento"/> dias</td>
+                            </tr>
+                        </table>
+
+                        <!-- Histórico de Calibrações -->
+                        <h3>Histórico de Calibrações</h3>
+                        <table class="table table-sm table-bordered">
+                            <thead style="background-color: #f0f0f0;">
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Data Calibração</th>
+                                    <th>Data Validade</th>
+                                    <th>Certificado</th>
+                                    <th>Resultado</th>
+                                    <th>Técnico</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.calibracao_ids" t-as="c">
+                                    <tr>
+                                        <td><span t-field="c.name"/></td>
+                                        <td><span t-field="c.data_calibracao"/></td>
+                                        <td><span t-field="c.data_validade"/></td>
+                                        <td><span t-field="c.numero_certificado"/></td>
+                                        <td><span t-field="c.resultado"/></td>
+                                        <td><span t-field="c.tecnico_responsavel"/></td>
+                                        <td><span t-field="c.state"/></td>
+                                    </tr>
+                                    <!-- Detalhes adicionais da calibração -->
+                                    <t t-if="c.state == 'aprovado'">
+                                        <tr style="background-color: #f9f9f9;">
+                                            <td colspan="7">
+                                                <small>
+                                                    <strong>Padrão:</strong> <span t-field="c.padrao_id.name"/> | 
+                                                    <strong>Local:</strong> <span t-field="c.local_ensaio_id.name"/> | 
+                                                    <strong>Executor:</strong> <span t-field="c.executor_id.name"/>
+                                                    <t t-if="c.temperatura or c.umidade or c.pressao">
+                                                        <br/>
+                                                        <strong>Condições Ambientais:</strong> 
+                                                        <t t-if="c.temperatura">Temp: <span t-field="c.temperatura"/>°C</t>
+                                                        <t t-if="c.umidade"> | Umidade: <span t-field="c.umidade"/>%</t>
+                                                        <t t-if="c.pressao"> | Pressão: <span t-field="c.pressao"/> hPa</t>
+                                                    </t>
+                                                    <t t-if="c.incerteza_expandida">
+                                                        <br/>
+                                                        <strong>Incerteza Expandida:</strong> <span t-field="c.incerteza_expandida"/>
+                                                    </t>
+                                                    <t t-if="c.observacoes">
+                                                        <br/>
+                                                        <strong>Observações:</strong> <span t-field="c.observacoes"/>
+                                                    </t>
+                                                </small>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Observações Gerais -->
+                        <t t-if="o.observacoes">
+                            <div class="mt-4">
+                                <h3>Observações do Equipamento</h3>
+                                <div t-field="o.observacoes"/>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_equipment_history" model="ir.actions.report">
+        <field name="name">Relatório Histórico do Equipamento</field>
+        <field name="model">metrology.equipamento</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">metrology_management.report_equipment_history</field>
+        <field name="report_file">metrology_management.report_equipment_history</field>
+        <field name="binding_model_id" ref="model_metrology_equipamento"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

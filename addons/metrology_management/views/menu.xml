@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu Principal -->
+    <menuitem id="menu_metrology_root"
+              name="Metrologia"
+              web_icon="metrology_management,static/description/icon.png"
+              sequence="50"/>
+
+    <!-- Submenu: Equipamentos -->
+    <menuitem id="menu_metrology_equipment"
+              name="Equipamentos"
+              parent="menu_metrology_root"
+              sequence="10"/>
+
+    <menuitem id="menu_metrology_equipment_list"
+              name="Instrumentos de Medição"
+              parent="menu_metrology_equipment"
+              action="action_equipamento"
+              sequence="10"/>
+
+    <!-- Submenu: Calibração -->
+    <menuitem id="menu_metrology_calibration"
+              name="Calibração"
+              parent="menu_metrology_root"
+              sequence="20"/>
+
+    <menuitem id="menu_metrology_calibration_list"
+              name="Calibrações"
+              parent="menu_metrology_calibration"
+              action="metrology_management_calibracao_action"
+              sequence="10"/>
+
+    <!-- Submenu: Padrões -->
+    <menuitem id="menu_metrology_standards"
+              name="Padrões"
+              parent="menu_metrology_root"
+              sequence="30"/>
+
+    <!-- Actions para modelos sem views específicas definidas (placeholders) -->
+    <record id="action_padrao_medicao" model="ir.actions.act_window">
+        <field name="name">Padrões de Medição</field>
+        <field name="res_model">metrology.padrao_medicao</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_local_ensaio" model="ir.actions.act_window">
+        <field name="name">Locais de Ensaio</field>
+        <field name="res_model">metrology.local_ensaios</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_parte_interessada" model="ir.actions.act_window">
+        <field name="name">Partes Interessadas</field>
+        <field name="res_model">metrology.parte_interessada</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_metrology_standards_list"
+              name="Padrões de Medição"
+              parent="menu_metrology_standards"
+              action="action_padrao_medicao"
+              sequence="10"/>
+
+    <!-- Submenu: Dashboard -->
+    <menuitem id="menu_metrology_dashboard"
+              name="Dashboard"
+              parent="menu_metrology_root"
+              action="action_metrology_dashboard"
+              sequence="1"/>
+
+    <!-- Submenu: Configurações -->
+    <menuitem id="menu_metrology_config"
+              name="Configurações"
+              parent="menu_metrology_root"
+              sequence="100"/>
+
+    <!-- Mover Locais e Partes Interessadas para o menu Padrões (mais adequado) -->
+    <menuitem id="menu_metrology_standards_local"
+              name="Locais de Ensaio"
+              parent="menu_metrology_standards"
+              action="action_local_ensaio"
+              sequence="20"/>
+
+    <menuitem id="menu_metrology_standards_parte"
+              name="Partes Interessadas"
+              parent="menu_metrology_standards"
+              action="action_parte_interessada"
+              sequence="30"/>
+</odoo>

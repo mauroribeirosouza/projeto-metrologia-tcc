@@ -3,7 +3,6 @@
     <record id="mail_activity_calibration_alert" model="mail.activity.type">
         <field name="name">Alerta de Calibração</field>
         <field name="summary">Calibração próxima ao vencimento</field>
-        <field name="category">reminder</field>
-        <field name="days">0</field>
+        <!-- category removed: using default category to ensure compatibility across Odoo versions -->
     </record>
 </odoo>

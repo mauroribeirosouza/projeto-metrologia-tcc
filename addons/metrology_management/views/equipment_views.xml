@@ -10,13 +10,14 @@
                     <field name="status_metrologico" widget="statusbar" 
                            statusbar_visible="conforme,vencido,nao_conforme"/>
                 </header>
-                <sheet>
+        <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_view_calibracoes" type="object"
-                                class="oe_stat_button" icon="fa-check-square-o">
+            <button name="action_view_calibracoes" type="object"
+                class="oe_stat_button" icon="fa-check-square-o">
                             <field name="calibracao_ids" widget="statinfo" 
                                    string="Calibrações"/>
-                        </button>
+            </button>
+            <button name="action_print_history" type="object" string="Exportar Histórico" class="oe_highlight" icon="fa-file-pdf-o"/>
                     </div>
                     <group>
                         <group name="identificacao" string="Identificação">

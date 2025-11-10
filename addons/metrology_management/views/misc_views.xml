@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Views for Local de Ensaio -->
+    <record id="view_local_ensaio_tree" model="ir.ui.view">
+        <field name="name">metrology.local_ensaio.tree</field>
+        <field name="model">metrology.local_ensaios</field>
+        <field name="arch" type="xml">
+            <tree string="Locais de Ensaio">
+                <field name="name"/>
+                <field name="endereco"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_local_ensaio_form" model="ir.ui.view">
+        <field name="name">metrology.local_ensaio.form</field>
+        <field name="model">metrology.local_ensaios</field>
+        <field name="arch" type="xml">
+            <form string="Local de Ensaio">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="endereco"/>
+                        <field name="observacoes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Views for Parte Interessada -->
+    <record id="view_parte_interessada_tree" model="ir.ui.view">
+        <field name="name">metrology.parte_interessada.tree</field>
+        <field name="model">metrology.parte_interessada</field>
+        <field name="arch" type="xml">
+            <tree string="Partes Interessadas">
+                <field name="name"/>
+                <field name="tipo"/>
+                <field name="contato"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_parte_interessada_form" model="ir.ui.view">
+        <field name="name">metrology.parte_interessada.form</field>
+        <field name="model">metrology.parte_interessada</field>
+        <field name="arch" type="xml">
+            <form string="Parte Interessada">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="tipo"/>
+                        <field name="contato"/>
+                        <field name="observacoes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search Views -->
+    <record id="view_local_ensaio_search" model="ir.ui.view">
+        <field name="name">metrology.local_ensaio.search</field>
+        <field name="model">metrology.local_ensaios</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Locais de Ensaio">
+                <field name="name"/>
+                <field name="endereco"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_parte_interessada_search" model="ir.ui.view">
+        <field name="name">metrology.parte_interessada.search</field>
+        <field name="model">metrology.parte_interessada</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Partes Interessadas">
+                <field name="name"/>
+                <field name="tipo"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>
